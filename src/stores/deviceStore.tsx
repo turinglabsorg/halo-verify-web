@@ -29,10 +29,11 @@ type TDeviceStore = {
   registered: boolean
   creator: string | null
   loading: boolean
+  addy: string | null
   init(): void
   getDevice(): void
   linkHalo(): void
-  triggerScan(reqx: any): void
+  triggerScan(reqx: any, challenge: string): void
 }
 
 const deviceStore = create<TDeviceStore>((set) => ({
@@ -41,6 +42,7 @@ const deviceStore = create<TDeviceStore>((set) => ({
   registered: false,
   creator: null,
   loading: false,
+  addy: null,
 
   init: () => {
     const url = URL(window.location.href, true)
@@ -132,8 +134,16 @@ const deviceStore = create<TDeviceStore>((set) => ({
       })
   },
 
-  triggerScan: async (reqx: any) => {
+  triggerScan: async (reqx: any, challenge: string) => {
     try {
+      let ui8ch = new Uint8Array([
+        113, 241, 176, 49, 249, 113, 39, 237, 135, 170, 177, 61, 15, 14, 105, 236, 120, 140, 4, 41, 65, 225, 107,
+        63, 214, 129, 133, 223, 169, 200, 21, 88,
+      ])
+      if (challenge.length > 0) {
+        console.log("Challenge:", challenge)
+        ui8ch = ethers.utils.arrayify(challenge)
+      }
       var req: any = {
         publicKey: {
           allowCredentials: [
@@ -143,18 +153,13 @@ const deviceStore = create<TDeviceStore>((set) => ({
               type: 'public-key',
             },
           ],
-          challenge: new Uint8Array([
-            113, 241, 176, 49, 249, 113, 39, 237, 135, 170, 177, 61, 15, 14, 105, 236, 120, 140, 4, 41, 65, 225, 107,
-            63, 214, 129, 133, 223, 169, 200, 21, 88,
-          ]),
-          rpId: TAG_DOMAIN,
+          challenge: ui8ch,
           timeout: 60000,
           userVerification: 'discouraged',
         },
       }
 
       var xdd: any = await navigator.credentials.get(req)
-
       return xdd?.response.signature
     } catch (err) {
       console.log('Error with scan', err)
@@ -163,13 +168,24 @@ const deviceStore = create<TDeviceStore>((set) => ({
 
   linkHalo: async () => {
     const { triggerScan, getDevice } = deviceStore.getState()
-    const sig = await triggerScan('02')
-
+    const challenge = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('challenge0x'))
+    const sig = await triggerScan('02', challenge)
     if (typeof sig !== 'undefined') {
       const sss = buf2hex(sig)
       const keys = parseKeys(sss)
-
+      try {
+        // TODO: Understand why `sig` or `sss` are not valid for ethers
+        const verified = ethers.utils.verifyMessage('challenge0x', "0x" + sss)
+        alert(verified)
+      } catch (e: any) {
+        alert(e.message)
+      }
       if (keys) {
+        const addy = await ethers.utils.computeAddress(keys.primaryPublicKeyHash)
+        const isValid = await ethers.utils.isAddress(addy)
+        if (isValid) {
+          set({ addy })
+        }
         set({ keys })
         getDevice()
       }

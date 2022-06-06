@@ -51,6 +51,7 @@ function LinkButton() {
 export default function Home() {
   const init = deviceStore((s) => s.init)
   const keys = deviceStore((s) => s.keys)
+  const addy = deviceStore((s) => s.addy)
   const loading = deviceStore((s) => s.loading)
   const connected = walletStore((s) => s.address).length > 0
   const registered = deviceStore((s) => s.registered)
@@ -75,6 +76,8 @@ export default function Home() {
             </p>
             <h3 className="font-normal mt-4 mb-1 text-light-gray text-xs">Device ID</h3>
             <p className="break-word font-bold text-smb">{keys?.primaryPublicKeyHash}</p>
+            <h3 className="font-normal mt-4 mb-1 text-light-gray text-xs">Device Address</h3>
+            <p className="break-word font-bold text-smb">{addy}</p>
           </>
         ) : (
           <>

@@ -133,7 +133,7 @@ const registerStore = create<TRegisterStore>((set) => ({
     // Note: we may want to change this format to accomodate more data than the blockHash in the future.
     const sigMsg = block.hash
     const sigCmd = generateCmd(1, 1, sigMsg)
-    const sig = await triggerScan(sigCmd)
+    const sig = await triggerScan(sigCmd, '')
     const sigString = buf2hex(sig)
     const sigSplit = unpackDERSig(sigString)
 
