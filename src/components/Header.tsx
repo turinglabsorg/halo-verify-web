@@ -30,7 +30,7 @@ export default function Header() {
   return (
     <header className="header">
       <Link to="/">
-        <img width="62" src="/assets/logo.png" />
+        <img width="62" src="/assets/logo-mego.svg" />
       </Link>
 
       {store.connected ? (

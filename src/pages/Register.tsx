@@ -25,51 +25,10 @@ export default function Register() {
   return (
     <Card loading={rs.loading}>
       <CardPadding>
-        <CardBack to="/">Register Halo</CardBack>
-
+        <CardBack to="/">Connect CHIP</CardBack>
         <div className="relative mb-6">
-          <GrayCenterBox>
-            <Image />
-
-            <div className="mt-4 mb-2">
-              <input
-                onChange={handleFileChange}
-                id="image"
-                className="hidden"
-                type="file"
-                accept="image/png, image/jpeg"
-                name="image"
-              />
-              <label htmlFor="image" className="button small black">
-                Add Image
-              </label>
-            </div>
-          </GrayCenterBox>
-
-          <div className={classNames('register-image-preview', { previewing: rs.previewing })}>
-            {rs.base64Image ? <img src={rs.base64Image} /> : <img src={rs.registerForm.imageSrc} />}
-
-            <button className="register-image-preview-remove" onClick={rs.clearImage}>
-              <X />
-            </button>
-          </div>
+            // TODO: See tokens owned by address an link one of them to chip
         </div>
-
-        <Field
-          onChange={rs.changeRegisterField}
-          value={rs.registerForm.name}
-          type="text"
-          placeholder="Enter name..."
-          name="name"
-        />
-
-        <Field
-          onChange={rs.changeRegisterField}
-          value={rs.registerForm.description}
-          type="textarea"
-          placeholder="Enter description..."
-          name="description"
-        />
       </CardPadding>
       <CardFooter>
         <CardPadding>
@@ -77,11 +36,11 @@ export default function Register() {
 
           {rs.registerForm.image ? (
             <Button fullWidth onClick={rs.scanHalo}>
-              Tap chip to mint HaLo
+              Tap chip to connect MEGO
             </Button>
           ) : (
             <Button fullWidth disabled>
-              Please add your image
+              Please select MEGO token
             </Button>
           )}
         </CardPadding>

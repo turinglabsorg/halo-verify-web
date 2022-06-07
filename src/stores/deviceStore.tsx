@@ -173,13 +173,6 @@ const deviceStore = create<TDeviceStore>((set) => ({
     if (typeof sig !== 'undefined') {
       const sss = buf2hex(sig)
       const keys = parseKeys(sss)
-      try {
-        // TODO: Understand why `sig` or `sss` are not valid for ethers
-        const verified = ethers.utils.verifyMessage('challenge0x', "0x" + sss)
-        alert(verified)
-      } catch (e: any) {
-        alert(e.message)
-      }
       if (keys) {
         const addy = await ethers.utils.computeAddress(keys.primaryPublicKeyHash)
         const isValid = await ethers.utils.isAddress(addy)
